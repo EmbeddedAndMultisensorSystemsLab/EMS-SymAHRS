@@ -18,4 +18,4 @@
 %   DEMO on youtube https://youtu.be/9i4aaN6PWnw
 %   
 %   For citing please use the following citation
-Mohamed M. Atia. (2018, January 4). EmbeddedMultisensorSystems/EMS-SymAHRS: First release (Version v1.0.0). Zenodo. http://doi.org/10.5281/zenodo.1135234
+M. M. Atia, “A sample usage of EMS Symbolic Engine for sensor fusion with application on Attitude and Heading Reference Systems (AHRS),” DOI:10.5281/zenodo.1135234, Open source project, January 2018
