@@ -18,4 +18,4 @@
 %   DEMO on youtube https://youtu.be/9i4aaN6PWnw
 %   
 %   For citing please use the following citation
-Dr. Mohamed Atia. (2018, January 4). EmbeddedMultisensorSystems/EMS-SymAHRS: First release (Version v1.0.0). Zenodo. http://doi.org/10.5281/zenodo.1135234
+Mohamed M. Atia. (2018, January 4). EmbeddedMultisensorSystems/EMS-SymAHRS: First release (Version v1.0.0). Zenodo. http://doi.org/10.5281/zenodo.1135234
