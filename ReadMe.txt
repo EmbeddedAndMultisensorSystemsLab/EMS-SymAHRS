@@ -16,3 +16,5 @@
 %   For commercial use, please contact mohamed.atia@carleton.ca
 
 %   DEMO on youtube https://youtu.be/9i4aaN6PWnw
+%   
+%   For citing please see https://zenodo.org/badge/DOI/10.5281/zenodo.1135234.svg
