@@ -20,27 +20,33 @@
 %--> Symbols definitions
 reset(symengine);
 syms    b c d;
+%--> Gyro measurements and errors
 syms    gyro_x gyro_y gyro_z;
+syms    gyro_rw_stdv_x gyro_rw_stdv_y gyro_rw_stdv_z;
 syms    gyro_bias_x gyro_bias_y gyro_bias_z;
-syms    gyro_bias_gauss_markov_stdv_x;
-syms    gyro_bias_gauss_markov_stdv_y;
-syms    gyro_bias_gauss_markov_stdv_z;
+syms    gyro_bias_gauss_markov_stdv_x gyro_bias_gauss_markov_stdv_y gyro_bias_gauss_markov_stdv_z;
+syms    gyro_bias_x_time_cnst gyro_bias_y_time_cnst gyro_bias_z_time_cnst;
+syms    gyro_sf_x gyro_sf_y gyro_sf_z;
+syms    gyro_sf_gauss_markov_stdv_x gyro_sf_gauss_markov_stdv_y gyro_sf_gauss_markov_stdv_z;
+syms    gyro_sf_x_time_cnst gyro_sf_y_time_cnst gyro_sf_z_time_cnst;
+
+%-- Accel measurements and errors
+syms    a_x a_y a_z;
+syms    acc_rw_stdv_x acc_rw_stdv_y acc_rw_stdv_z;
+syms    acc_bias_x acc_bias_y acc_bias_z;
+syms    acc_bias_gauss_markov_stdv_x acc_bias_gauss_markov_stdv_y acc_bias_gauss_markov_stdv_z;
+syms    acc_bias_x_time_cnst acc_bias_y_time_cnst acc_bias_z_time_cnst;
+syms    acc_sf_x acc_sf_y acc_sf_z;
+syms    acc_sf_gauss_markov_stdv_x acc_sf_gauss_markov_stdv_y acc_sf_gauss_markov_stdv_z;
+syms    acc_sf_x_time_cnst acc_sf_y_time_cnst acc_sf_z_time_cnst;
+
 syms    w_el_x w_el_y w_el_z;
 syms    wg_noise 
-syms    gyro_rw_stdv_x gyro_rw_stdv_y gyro_rw_stdv_z;
-syms    gyro_bias_x_time_cnst gyro_bias_y_time_cnst gyro_bias_z_time_cnst;
 syms    lat lon alt 
 syms    wander_angle 
 syms    w_N_IE we 
 syms    vn ve vu 
 syms    b_pos c_pos d_pos
-syms    a_x a_y a_z 
-syms    acc_bias_x acc_bias_y acc_bias_z
-syms    acc_bias_gauss_markov_stdv_x 
-syms    acc_bias_gauss_markov_stdv_y
-syms    acc_bias_gauss_markov_stdv_z
-syms    acc_rw_stdv_x acc_rw_stdv_y acc_rw_stdv_z 
-syms    acc_bias_x_time_cnst acc_bias_y_time_cnst acc_bias_z_time_cnst 
 syms    Rm Rn g lat0 lon0 
 syms    ve_dot vn_dot vu_dot 
 syms    Euler_pitch Euler_roll Euler_heading
@@ -78,16 +84,24 @@ R2D = 180/pi;
 %--> Definitions
 g_N = [0; 0; -g];                
 V_N = [ve; vn; vu];
-    
-%--> raw measurements vectors
-acc_B = [a_x-acc_bias_x+acc_rw_stdv_x*wg_noise;
-         a_y-acc_bias_y+acc_rw_stdv_y*wg_noise;
-         a_z-acc_bias_z+acc_rw_stdv_z*wg_noise];
-     
-gyro_B = [gyro_x-gyro_bias_x+gyro_rw_stdv_x*wg_noise;
-         gyro_y-gyro_bias_y+gyro_rw_stdv_y*wg_noise;
-         gyro_z-gyro_bias_z+gyro_rw_stdv_z*wg_noise];
 
+%--> raw measurements vectors
+acc_B = [a_x/(1+acc_sf_x)-acc_bias_x+acc_rw_stdv_x*wg_noise;
+         a_y/(1+acc_sf_y)-acc_bias_y+acc_rw_stdv_y*wg_noise;
+         a_z/(1+acc_sf_z)-acc_bias_z+acc_rw_stdv_z*wg_noise];
+     
+gyro_B = [gyro_x/(1+gyro_sf_x)-gyro_bias_x+gyro_rw_stdv_x*wg_noise;
+         gyro_y/(1+gyro_sf_y)-gyro_bias_y+gyro_rw_stdv_y*wg_noise;
+         gyro_z/(1+gyro_sf_z)-gyro_bias_z+gyro_rw_stdv_z*wg_noise];
+
+% acc_B = [(a_x-acc_bias_x)/(1+acc_sf_x)+acc_rw_stdv_x*wg_noise;
+%          (a_y-acc_bias_y)/(1+acc_sf_y)+acc_rw_stdv_y*wg_noise;
+%          (a_z-acc_bias_z)/(1+acc_sf_z)+acc_rw_stdv_z*wg_noise];
+%      
+% gyro_B = [(gyro_x-gyro_bias_x)/(1+gyro_sf_x)+gyro_rw_stdv_x*wg_noise;
+%          (gyro_y-gyro_bias_y)/(1+gyro_sf_y)+gyro_rw_stdv_y*wg_noise;
+%          (gyro_z-gyro_bias_z)/(1+gyro_sf_z)+gyro_rw_stdv_z*wg_noise];
+     
 mag_B = [mag_x-mag_bias_x+mag_rw_stdv_x*wg_noise;
          mag_y-mag_bias_y+mag_rw_stdv_y*wg_noise;
          mag_z-mag_bias_z+mag_rw_stdv_z*wg_noise];
@@ -179,10 +193,21 @@ gyro_bias_x_dot = -1/(gyro_bias_x_time_cnst)*gyro_bias_x + gyro_bias_gauss_marko
 gyro_bias_y_dot = -1/(gyro_bias_y_time_cnst)*gyro_bias_y + gyro_bias_gauss_markov_stdv_y/gyro_bias_y_time_cnst*wg_noise;
 gyro_bias_z_dot = -1/(gyro_bias_z_time_cnst)*gyro_bias_z + gyro_bias_gauss_markov_stdv_z/gyro_bias_z_time_cnst*wg_noise;
 
+%Gyro scale factor system equations
+gyro_sf_x_dot = -1/(gyro_sf_x_time_cnst)*gyro_sf_x + gyro_sf_gauss_markov_stdv_x/gyro_sf_x_time_cnst*wg_noise;
+gyro_sf_y_dot = -1/(gyro_sf_y_time_cnst)*gyro_sf_y + gyro_sf_gauss_markov_stdv_y/gyro_sf_y_time_cnst*wg_noise;
+gyro_sf_z_dot = -1/(gyro_sf_z_time_cnst)*gyro_sf_z + gyro_sf_gauss_markov_stdv_z/gyro_sf_z_time_cnst*wg_noise;
+
 %--> Acc bias system equations          
 acc_bias_x_dot = -1/(acc_bias_x_time_cnst)*acc_bias_x + acc_bias_gauss_markov_stdv_x/acc_bias_x_time_cnst*wg_noise;
 acc_bias_y_dot = -1/(acc_bias_y_time_cnst)*acc_bias_y + acc_bias_gauss_markov_stdv_y/acc_bias_y_time_cnst*wg_noise;
 acc_bias_z_dot = -1/(acc_bias_z_time_cnst)*acc_bias_z + acc_bias_gauss_markov_stdv_z/acc_bias_z_time_cnst*wg_noise;
+
+%Acc scale factor system equations
+acc_sf_x_dot = -1/(acc_sf_x_time_cnst)*acc_sf_x + acc_sf_gauss_markov_stdv_x/acc_sf_x_time_cnst*wg_noise;
+acc_sf_y_dot = -1/(acc_sf_y_time_cnst)*acc_sf_y + acc_sf_gauss_markov_stdv_y/acc_sf_y_time_cnst*wg_noise;
+acc_sf_z_dot = -1/(acc_sf_z_time_cnst)*acc_sf_z + acc_sf_gauss_markov_stdv_z/acc_sf_z_time_cnst*wg_noise;
+
 
 %--> Velocity system equations
 V_N_dot = C_NL * C_LB_from_quat * acc_B + g_N - cross((w_N_EN + 2*w_N_IE),V_N);
@@ -206,13 +231,18 @@ symbol_list             = [east_pos;north_pos;alt;...
                            ve;vn;vu;...
                            b;c;d;...
                            gyro_bias_x;gyro_bias_y;gyro_bias_z;...
-                           acc_bias_x;acc_bias_y;acc_bias_z];
+                           gyro_sf_x;gyro_sf_y;gyro_sf_z;...
+                           acc_bias_x;acc_bias_y;acc_bias_z;...
+                           acc_sf_x;acc_sf_y;acc_sf_z;...
+                           ];
                        
 symbol_derivative_list  = [east_pos_dot;north_pos_dot;alt_dot;...
                            ve_dot;vn_dot;vu_dot;...
                            b_dot;c_dot;d_dot;...
                            gyro_bias_x_dot;gyro_bias_y_dot;gyro_bias_z_dot;...
-                           acc_bias_x_dot;acc_bias_y_dot;acc_bias_z_dot];
+                           gyro_sf_x_dot;gyro_sf_y_dot;gyro_sf_z_dot;...
+                           acc_bias_x_dot;acc_bias_y_dot;acc_bias_z_dot;...
+                           acc_sf_x_dot;acc_sf_y_dot;acc_sf_z_dot];
 
 %--> Jacobian of the nonlinear system transition matrix (F)
 for i = 1:length(symbol_list)
@@ -233,18 +263,18 @@ quat_projection_matrix = [(a^2+b^2+c^2+d^2) 0                 0                 
                                0            2*(b*d-a*c)       2*(c*d + a*b)     (a^2-b^2-c^2+d^2)];
                            
 acc_quat_vector = [0;acc_B];
-g_N_meas_vector = quat_projection_matrix*acc_quat_vector;
-for r = 1:length(g_N_meas_vector)
+g_L_meas_vector = quat_projection_matrix*acc_quat_vector;
+for r = 1:length(g_L_meas_vector)
     for c = 1:length(symbol_list)
-        g_N_meas_matrix(r,c) = [diff(g_N_meas_vector(r), symbol_list(c))];
+        g_L_meas_matrix(r,c) = [diff(g_L_meas_vector(r), symbol_list(c))];
     end
 end
 
 %--> Magnetic measurement model
 mag_quat_vector = [0;mag_B];
-m_N_meas_vector = quat_projection_matrix*mag_quat_vector;
-for r = 1:length(g_N_meas_vector)
+m_L_meas_vector = quat_projection_matrix*mag_quat_vector;
+for r = 1:length(g_L_meas_vector)
     for c = 1:length(symbol_list)
-        m_N_meas_matrix(r,c) = [diff(m_N_meas_vector(r), symbol_list(c))];
+        m_L_meas_matrix(r,c) = [diff(m_L_meas_vector(r), symbol_list(c))];
     end
 end

@@ -16,7 +16,7 @@
 %   <http://www.gnu.org/licenses/>.
 
 %   For commercial use, please contact mohamed.atia@carleton.ca
-
+global time_vector_sec;
 refreshdata(h1);
 refreshdata(h2);
 refreshdata(h3);

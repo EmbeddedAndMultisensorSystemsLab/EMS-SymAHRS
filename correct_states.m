@@ -26,9 +26,16 @@ a_value(index+1) = a_value(index+1) - ([b_value(index) c_value(index) d_value(in
 gyro_bias_x_value(index+1) = gyro_bias_x_value(index+1) + state_correction_vector(10);
 gyro_bias_y_value(index+1) = gyro_bias_y_value(index+1) + state_correction_vector(11);
 gyro_bias_z_value(index+1) = gyro_bias_z_value(index+1) + state_correction_vector(12);
-acc_bias_x_value(index+1) = acc_bias_x_value(index+1) + state_correction_vector(13);
-acc_bias_y_value(index+1) = acc_bias_y_value(index+1) + state_correction_vector(14);
-acc_bias_z_value(index+1) = acc_bias_z_value(index+1) + state_correction_vector(15);
+gyro_sf_x_value(index+1) = gyro_sf_x_value(index+1) + state_correction_vector(13);
+gyro_sf_y_value(index+1) = gyro_sf_y_value(index+1) + state_correction_vector(14);
+gyro_sf_z_value(index+1) = gyro_sf_z_value(index+1) + state_correction_vector(15);
+
+acc_bias_x_value(index+1) = acc_bias_x_value(index+1) + state_correction_vector(16);
+acc_bias_y_value(index+1) = acc_bias_y_value(index+1) + state_correction_vector(17);
+acc_bias_z_value(index+1) = acc_bias_z_value(index+1) + state_correction_vector(18);
+acc_sf_x_value(index+1) = acc_sf_x_value(index+1) + state_correction_vector(19);
+acc_sf_y_value(index+1) = acc_sf_y_value(index+1) + state_correction_vector(20);
+acc_sf_z_value(index+1) = acc_sf_z_value(index+1) + state_correction_vector(21);
 
 %--> Normalize the quaternion
 [a_value(index+1), b_value(index+1), c_value(index+1), d_value(index+1)] = ...
